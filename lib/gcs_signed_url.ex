@@ -64,6 +64,7 @@ defmodule GcsSignedUrl do
 
     case Crypto.sign(string_to_sign, oauth_config) do
       {:ok, signature} ->
+        signature = URI.encode(signature)
         url = String.replace(url_template, "#SIGNATURE#", signature)
         {:ok, url}
 
