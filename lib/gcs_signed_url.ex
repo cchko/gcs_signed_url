@@ -49,7 +49,7 @@ defmodule GcsSignedUrl do
     %StringToSign{string_to_sign: string_to_sign, url_template: url_template} =
       StringToSign.generate_v2(client_email, bucket, filename, opts)
 
-    signature = Crypto.sign(string_to_sign, client) |> Base.encode64() |> URI.encode(&(&1 != ?+))
+    signature = Crypto.sign(string_to_sign, client) |> Base.encode64() |> String.replace("+", "%2B")
     String.replace(url_template, "#SIGNATURE#", signature)
   end
 
@@ -64,7 +64,7 @@ defmodule GcsSignedUrl do
 
     case Crypto.sign(string_to_sign, oauth_config) do
       {:ok, signature} ->
-        signature = URI.encode(signature, &(&1 != ?+))
+        signature = String.replace(signature, "+", "%2B")
         url = String.replace(url_template, "#SIGNATURE#", signature)
         {:ok, url}
 
